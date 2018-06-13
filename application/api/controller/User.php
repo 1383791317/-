@@ -35,7 +35,7 @@ class User extends Base{
     public function login(Request $request)
     {
         if ($request->isPost()){
-            $this->returnJson('403','错误访问');
+           $this->returnJson('403','错误访问');
         }
 
         $post = $this->request->param();

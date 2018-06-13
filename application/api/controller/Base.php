@@ -2,6 +2,7 @@
 namespace app\api\controller;
 
 use think\Controller;
+use think\Request;
 
 class Base extends Controller
 {
@@ -11,8 +12,27 @@ class Base extends Controller
         $this->request = Request::instance();
     }
 
+    //数据处理
+    public function dataDispose($data,$stat = false,$msgArr)
+    {
+        if ($data) {
+            foreach ($data as $k=>$v){
+                if (empty($data[$k])) {
+                    if ($stat){
+                        $this->returnJson('403',$msgArr[$k].'不能为空');
+                    }else {
+                        unset($data[$k]);
+                    }
+                }
+            }
+            return $data;
+        }else{
+            $this->returnJson('403','参数错误');;
+        }
+    }
+
     //返回数据
-    public function returnJson($code,$msg,$data)
+    public function returnJson($code,$msg,$data=[])
     {
         $res = [];
         if (is_array($code)){
@@ -22,25 +42,8 @@ class Base extends Controller
             $res['msg'] = empty($msg)? '未定义消息':$msg;
             if (!empty($data)) $res['data'] = $data;
         }
-
-        return json_encode($res);
+        echo json_encode($res);exit;
     }
-
-    //数据处理
-    public function dataDispose($data,$stat = false,$msgArr)
-    {
-        foreach ($data as $k=>$v){
-            if (empty($data[$k])) {
-                if ($stat){
-                    $this->returnJson('403',$msgArr[$k].'不能为空');
-                }else {
-                    unset($data[$k]);
-                }
-            }
-        }
-        return $data;
-    }
-
     /**
      * token生成与解析
      * @param $string   加密字符串
